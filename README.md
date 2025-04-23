@@ -374,3 +374,79 @@ For large collections, this would be extremely inefficient and slow. By requirin
 
 
 
+## FAQ - Technical Decisions
+
+### Why did you choose Next.js instead of a separate React frontend and Node.js backend?
+
+I chose Next.js for this project because it provides an all-in-one solution that combines React for the frontend with server-side capabilities, eliminating the need for a separate backend. This approach offers several advantages:
+
+1. **Unified codebase**: Next.js allowed me to keep all code in a single repository, simplifying development and deployment.
+
+2. **API routes**: Next.js provides API routes feature that functions like a lightweight Node.js backend, allowing me to create API endpoints within the same framework.
+
+3. **Server-side rendering**: For survey interfaces, having server-side rendering improves loading performance and SEO without requiring a separate rendering service.
+
+4. **Simplified state management**: The unified model reduced complexity in managing state between frontend and backend.
+
+This approach let me focus more on implementing the core survey functionality rather than setting up communication between separate services.
+
+### Why did you choose Firebase/Firestore instead of a SQL database?
+
+While the specifications suggested a SQL database, I opted for Firebase/Firestore for several reasons:
+
+1. **Real-time capabilities**: Firestore's real-time updates are ideal for a survey application, allowing instant display of new responses.
+
+2. **Authentication integration**: Firebase Auth provided a robust authentication system with minimal setup, which was crucial for managing survey ownership and permissions.
+
+3. **Flexible schema**: Survey questions and responses can vary significantly in structure, making Firestore's schema-less approach well-suited for this application.
+
+4. **Scalability**: Firestore automatically handles scaling, which is important for a survey system that might experience variable load patterns.
+
+5. **Reduced backend complexity**: Using Firebase allowed me to implement complex features like authentication and real-time updates without writing extensive backend code.
+
+I did implement proper data modeling with clear relationships between surveys, questions, and responses to maintain the relational aspects that would be present in a SQL database. The composite indexes I created also provide efficient querying similar to what you'd expect in a relational system.
+
+### How did you approach authentication in your solution?
+
+I implemented a dual authentication system:
+
+1. **Firebase Authentication**: Provides the core user management, handling sign-up, login, and session persistence.
+
+2. **NextAuth.js**: Adds support for social logins and manages session state across the application.
+
+This approach gives users flexibility in how they authenticate while maintaining strong security. For survey responses, I designed the system to encourage authentication but allow anonymous submissions, storing the respondent's email when available to provide survey creators with more context about who responded.
+
+### How did you handle data relationships without a relational database?
+
+Even though I used a NoSQL database, I maintained clear data relationships through thoughtful modeling:
+
+1. **References**: Each response contains a reference to its parent survey through the surveyId field.
+
+2. **Permission control**: I implemented security rules that enforce relationships, such as only allowing survey creators to view responses for their surveys.
+
+3. **Composite indexes**: I created specific indexes to efficiently query related data, such as finding all responses for a particular survey sorted by creation date.
+
+4. **Data validation**: I implemented validation to ensure referential integrity, making sure responses can't be created for non-existent surveys.
+
+This approach provides many of the benefits of a relational database while taking advantage of Firestore's flexibility and real-time capabilities.
+
+### How did you approach the UI/UX design for creating and taking surveys?
+
+I focused on creating an intuitive, clean UI using TailwindCSS:
+
+1. **Survey creator**: The interface allows users to easily add, edit, and reorder different question types with immediate visual feedback.
+
+2. **Survey response**: The public-facing survey interface is clean and responsive, working well on both mobile and desktop devices.
+
+3. **Results visualization**: For survey creators, I implemented both summary statistics with visualizations and detailed individual response views.
+
+4. **Responsive design**: All interfaces adapt to different screen sizes, ensuring a good user experience across devices.
+
+The TailwindCSS framework allowed me to create a consistent, modern design system without writing custom CSS, speeding up development while maintaining a professional appearance.
+
+## Future Expandability
+1. **Analytics Integration** - For deeper insights into survey data
+2. **Enhanced Question Types** - Rating scales, matrix questions, etc.
+3. **Team Collaboration** - Allow multiple users to manage the same surveys
+4. **Customizable Themes** - Branded survey experiences
+5. **API Access** - For integration with other systems
