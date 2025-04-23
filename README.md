@@ -371,3 +371,6 @@ Without the index, Firestore would need to:
 Scan the entire collection for matching survey IDs
 Then sort all matching documents by date
 For large collections, this would be extremely inefficient and slow. By requiring indexes, Firestore ensures all queries remain fast, even as your database grows.
+
+
+
